@@ -60,12 +60,15 @@ package kwon.dongwook.apps.vjdetector {
 		 * By increasing this number you can get less but correct result.
 		 * Lower number of this parameter will give you more results but might be more noise too.
 		 * 
-		 * 2~3 should be good number in practice.
+		 * With small size of image
+		 * 1~2 should be good number in practice.
+		 * And for large size of image
+		 * 3~4 is better result
 		 * 
 		 * Setting this to 0 will give you all the detected results. 
 		 * 
 		 */
-		public var minNeighbors:uint = 3;
+		public var minNeighbors:uint = 2;
 		
 		/**
 		 * Starting size for scanning image of detection.
