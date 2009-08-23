@@ -1,0 +1,20 @@
+<languageVersion : 1.0;>
+
+kernel BlackAndWhite
+<   namespace : "kwon.dongwook";
+    vendor : "DK";
+    version : 1;
+    description : "Black and white Filter";
+>
+{
+    input image4 src;
+    output pixel4 dst;
+
+    void
+    evaluatePixel()
+    {
+        dst = sampleNearest(src,outCoord());
+        float p = (0.2125 * dst.r) + (0.7154 * dst.g) + (0.0721 * dst.b);
+        dst = float4(p, p, p, dst.a);
+    }
+}
