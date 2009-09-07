@@ -146,24 +146,25 @@ package kwon.dongwook.apps.vjdetector {
 			var trainedWindowSize:Rectangle = cascade.trainedWindowSize;
 			
 			var maxCount:uint = getMaxCheckCount();
-			var currentScale:Number = Math.pow(scaleFactor, maxCount-1);
+			var math:* = Math; // For speed up
+			var currentScale:Number = math.pow(scaleFactor, maxCount-1);
 			
 			detectLoop: for (var count:uint = maxCount; count > 0; count--, currentScale /= scaleFactor) {
 				var rect:Rectangle = new Rectangle();
-				rect.width = Math.round(trainedWindowSize.width * currentScale);
-				rect.height = Math.round(trainedWindowSize.height * currentScale);
+				rect.width = math.round(trainedWindowSize.width * currentScale);
+				rect.height = math.round(trainedWindowSize.height * currentScale);
 
 				if (rect.width < minSize.width || rect.height < minSize.height)
 					continue;
 
-				var step:Point = new Point(1 , Math.max(currentScale, 2));
-				var end:Point = new Point(Math.round((width - rect.width)/step.y), Math.round((height - rect.height)/step.y));
+				var step:Point = new Point(1 , math.max(currentScale, 2));
+				var end:Point = new Point(math.round((width - rect.width)/step.y), math.round((height - rect.height)/step.y));
 				var start:Point = new Point();
 				cascade.setScaleAndWeight(currentScale);
-				for (var iy:uint = start.y; iy < end.y; iy += step.y) {
-					rect.y = Math.round(iy * step.y);
-					for (var ix:uint = start.x; ix < end.x; ix += step.x) {
-						rect.x = Math.round(ix * step.y);
+				for (var iy:int = start.y; iy < end.y; iy += step.y) {
+					rect.y = math.round(iy * step.y);
+					for (var ix:int = start.x; ix < end.x; ix += step.x) {
+						rect.x = math.round(ix * step.y);
 						if (cascade.checkOf(rect)) {
 							objects.push(rect.clone());
 							if (_config.findBiggest && objects.length >= _config.minNeighbors)
@@ -171,7 +172,7 @@ package kwon.dongwook.apps.vjdetector {
 						}
 					}
 				}
-			} 
+			}
 			return _config.minNeighbors < 1 ? objects: _resultFilter.getResults(objects, _config.minNeighbors);
 		}
 		

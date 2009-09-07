@@ -46,7 +46,8 @@ package kwon.dongwook.apps.vjdetector.models {
 			_scaledWindowSize.width = Math.round(trainedWindowSize.width * _scale);
 			_scaledWindowSize.height = Math.round(trainedWindowSize.height * _scale);
 			_weightScale = 1 / (_scaledWindowSize.width * _scaledWindowSize.height);
-			var correctionRatio:Number = _weightScale * (hasTiltedFeature ? 0.5: 1);
+
+			var correctionRatio:Number = _weightScale;
 			for each(var stage:HaarStage in stages) {
 				for each(var classifier:HaarClassifier in stage.classifiers) {
 					classifier.feature.setScaleAndWeight(_scale, correctionRatio);

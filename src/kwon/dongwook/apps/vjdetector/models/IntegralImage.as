@@ -56,23 +56,23 @@ package kwon.dongwook.apps.vjdetector.models {
 					
 					var pixelOfOneChannel:uint = singleChannel ? pixels[oxy]: (pixels[oxy] << 24) >>> 24;
 					_sum[ixy] = pixelOfOneChannel + _sum[ipxy] + _sum[ixpy] - _sum[ipxpy];
-					_squareSum[ixy] = Math.pow(pixelOfOneChannel, 2) + _squareSum[ipxy] + _squareSum[ixpy] - _squareSum[ipxpy];
+					_squareSum[ixy] = (pixelOfOneChannel * pixelOfOneChannel) + _squareSum[ipxy] + _squareSum[ixpy] - _squareSum[ipxpy];
 				}
 			}
 		}
 		
 		public function getSumOf(rect:Rectangle):Number {
-			return _sum[uint((rect.bottom * _width) + rect.right)] - // D
-					_sum[uint((rect.bottom * _width) + rect.x)] - // C
-					_sum[uint((rect.y * _width) + rect.right)] + // B
-					_sum[uint((rect.y * _width) + rect.x)]; // A
+			return _sum[int((rect.bottom * _width) + rect.right)] - // D
+					_sum[int((rect.bottom * _width) + rect.x)] - // C
+					_sum[int((rect.y * _width) + rect.right)] + // B
+					_sum[int((rect.y * _width) + rect.x)]; // A
 		}
 		
 		public function getSquareSumOf(rect:Rectangle):Number {
-			return _squareSum[uint((rect.bottom * _width) + rect.right)] - // D
-					_squareSum[uint((rect.bottom * _width) + rect.x)] - // C
-					_squareSum[uint((rect.y * _width) + rect.right)] + // B
-					_squareSum[uint((rect.y * _width) + rect.x)]; // A
+			return _squareSum[int((rect.bottom * _width) + rect.right)] - // D
+					_squareSum[int((rect.bottom * _width) + rect.x)] - // C
+					_squareSum[int((rect.y * _width) + rect.right)] + // B
+					_squareSum[int((rect.y * _width) + rect.x)]; // A
 		}
 		
 	}
