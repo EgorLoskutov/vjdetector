@@ -12,12 +12,12 @@ package kwon.dongwook.apps.vjdetector.models {
 			rectangles = new Vector.<HaarRectangle>();
 		}
 
-		public function getSumAt(offset:Point, fromImage:IntegralImage):Number {
+		public function getSumAt(offset:Point, sourceImage:IntegralImage):Number {
 			var sum:Number = 0;
 			rectangles.forEach(function(rect:HaarRectangle, i:int, vector:Vector.<HaarRectangle>):void {
 				var area:Rectangle = rect.rectangle;
 				area.offsetPoint(offset);
-				sum += fromImage.getSumOf(area) * rect.scaledWeight; 
+				sum += sourceImage.getSumOf(area) * rect.scaledWeight;
 			}, this);
 			return sum;
 		}

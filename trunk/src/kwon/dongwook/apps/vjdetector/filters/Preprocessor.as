@@ -70,7 +70,7 @@ package kwon.dongwook.apps.vjdetector.filters {
 			var equalizedHistogram:Vector.<uint> = new Vector.<uint>(256, true);
 			var size:uint = bitmapData.width * bitmapData.height;
 			var accumulated:Number = 0;
-			for (var i:uint = 0; i < 256; i++) {
+			for (var i:int = 0; i < 256; i++) {
 				var current:Number = (histogram[i] / size) + accumulated;
 				equalizedHistogram[i] = Math.round(current * 255);
 				accumulated = current;
