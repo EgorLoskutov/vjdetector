@@ -18,6 +18,7 @@ package {
 	import kwon.dongwook.log.TimeRecorder;
 	import kwon.dongwook.utils.MathUtil;
 
+	[SWF(width="1000", height="700", backgroundColor="#000000", framerate="30")]
 	public class FaceDetection extends Sprite {
 		
 		private var _detector:Detector;

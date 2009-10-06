@@ -34,14 +34,12 @@ package kwon.dongwook.apps.vjdetector.models {
 			_length = _width * _height;
 			_sum = new Vector.<Number>(_length, true);
 			_squareSum = new Vector.<Number>(_length, true);
-			var singleChannel:Boolean = Boolean(pixelVector != null);
-			if (!singleChannel) {
+			if (pixelVector == null)
 				pixelVector = _bitmapData.getVector(_bitmapData.rect);
-			}
-			calculate(pixelVector, _bitmapData.rect, singleChannel);
+			calculate(pixelVector, _bitmapData.rect);
 		}
 		
-		private function calculate(pixels:Vector.<uint>, size:Rectangle, singleChannel:Boolean = false):void {
+		private function calculate(pixels:Vector.<uint>, size:Rectangle):void {
 			var oWidth:uint = size.width;
 			var oHeight:uint = size.height;
 			var iWidth:uint = oWidth + 1;
@@ -54,9 +52,9 @@ package kwon.dongwook.apps.vjdetector.models {
 					var ixy:uint = (x+1) + ((y+1) * (iWidth));
 					var ipxpy:uint = x + (y * (iWidth));
 					
-					var pixelOfOneChannel:uint = singleChannel ? pixels[oxy]: (pixels[oxy] << 24) >>> 24;
-					_sum[ixy] = pixelOfOneChannel + _sum[ipxy] + _sum[ixpy] - _sum[ipxpy];
-					_squareSum[ixy] = (pixelOfOneChannel * pixelOfOneChannel) + _squareSum[ipxy] + _squareSum[ixpy] - _squareSum[ipxpy];
+					var blue:uint = uint(pixels[oxy] & 0x000000FF);
+					_sum[ixy] = blue + _sum[ipxy] + _sum[ixpy] - _sum[ipxpy];
+					_squareSum[ixy] = (blue * blue) + _squareSum[ipxy] + _squareSum[ixpy] - _squareSum[ipxpy];
 				}
 			}
 		}
