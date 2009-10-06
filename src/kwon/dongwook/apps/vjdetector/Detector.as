@@ -9,7 +9,6 @@ package kwon.dongwook.apps.vjdetector {
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
-	import kwon.dongwook.apps.vjdetector.filters.Preprocessor;
 	import kwon.dongwook.apps.vjdetector.models.HaarCascade;
 	import kwon.dongwook.apps.vjdetector.models.IntegralImage;
 	import kwon.dongwook.apps.vjdetector.models.ResultFilter;
@@ -74,13 +73,10 @@ package kwon.dongwook.apps.vjdetector {
 		
 		public function Detector() {
 			_preprocessor = new Preprocessor();
-			_preprocessor.addEventListener(Preprocessor.READY, function(event:Event):void {
-				loadConfig();
-			}, false, 0, true);
 		}
 		
 		public function load():void {
-			_preprocessor.load();
+			loadConfig();
 		}
 		
 		private function loadConfig():void {
