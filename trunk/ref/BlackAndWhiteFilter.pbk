@@ -1,8 +1,8 @@
 <languageVersion : 1.0;>
 
 kernel BlackAndWhite
-<   namespace : "kwon.dongwook";
-    vendor : "DK";
+<   namespace : "Kwon.Dongwook";
+    vendor : "http://blog.spiderbutterfly.com";
     version : 1;
     description : "Black and white Filter";
 >
