@@ -1,0 +1,142 @@
+<languageVersion : 1.0;>
+
+kernel NewFilter
+<   namespace : "Kwon.Dongwook";
+    vendor : "http://blog.spiderbutterfly.com";
+    version : 1;
+    description : "Get Gradient with Sobel Edge";
+>
+{
+
+    parameter float3x3 MGX <
+        defaultValue: float3x3(-1.0, 0.0, 1.0, -2.0, 0.0, 2.0, -1.0, 0.0, 1.0);
+    >;
+    
+    parameter float3x3 MGY <
+        defaultValue: float3x3(1, 2, 1, 0, 0, 0, -1, -2, -1);
+    >;
+    
+    parameter float PI <
+        defaultValue: 3.1415926535897932384626433832795;
+    >;
+    
+    input image4 src;
+    output pixel4 dst;
+    
+    void evaluatePixel() {
+    
+        float2 current = outCoord();
+        float2 pos;
+        int mIndex = 0;
+        float4 g = float4(0.0);
+        float4 gx = float4(0.0);
+        float4 gy = float4(0.0);
+  
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[0][0]);
+        mIndex++;
+        
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[0][1]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[0][2]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[1][0]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[1][1]);
+        mIndex++;
+        
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[1][2]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[2][0]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[2][1]);
+        mIndex++;
+        
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gx += (sampleNearest(src, pos) * MGX[2][2]);
+        
+        // GY
+        mIndex = 0;
+        
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[0][0]);
+        mIndex++;
+        
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[0][1]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[0][2]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[1][0]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[1][1]);
+        mIndex++;
+        
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[1][2]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[2][0]);
+        mIndex++;
+
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[2][1]);
+        mIndex++;
+        
+        pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
+        gy += (sampleNearest(src, pos) * MGY[2][2]);
+        
+  //      g = sqrt((gx * gx) + (gy * gy));
+        g = abs(gx) + abs(gy);
+        
+        float dir = 0.5;
+        if (gx.r == 0.0) {
+            if (gy.r == 0.0) {
+                dir = 0.5;
+            } else {
+                if (gy.r > 0.0) {
+                    dir = 1.0;
+                } else {
+                    dir = 0.0;
+                }
+            }
+        } else {
+            float theta = atan( abs(gy) / abs(gx) ).r;
+            if (-(PI/2.0) <= theta && theta < -((3.0 * PI)/8.0)) {
+                dir = 0.0;
+            } else if (-((3.0 * PI)/8.0) <= theta && theta <= -(PI/8.0)) {
+                dir = 0.25;
+            } else if (-(PI/8.0) < theta && theta < (PI/8.0)) {
+                dir = 0.5;
+            } else if ( (PI/8.0) <= theta && theta <= ((3.0 * PI)/8.0)) {
+                dir = 0.75;
+            } else if (((3.0 * PI)/8.0) < theta && theta <= (PI/2.0)) {
+                dir = 1.0;
+            } else {
+                dir = 0.5;
+            }
+        }
+        float alpha = sampleNearest(src, outCoord()).a;
+//        dst = float4(g.r, g.r, g.r, alpha);
+        dst = pixel4(g.r, dir, g.r, alpha);
+    }
+}
