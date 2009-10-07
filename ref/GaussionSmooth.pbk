@@ -1,0 +1,146 @@
+<languageVersion : 1.0;>
+
+kernel NewFilter
+<   namespace : "Kwon.Dongwook";
+    vendor : "www.spiderbutterfly.com";
+    version : 1;
+    description : "Gaussian mask";
+>
+{
+
+    // As long as there isn't no support of graph in PixelBender under flash
+    // the input image should be black and white, use another filter before use this
+    input image4 src;
+    output pixel4 dst;
+
+    // Gaussian mask, I'm doing this way
+    // ONLY because there is no 5X5 matrix nor array support in PB under flash
+    parameter float g11 <defaultValue:2.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g12 <defaultValue:4.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g13 <defaultValue:5.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g14 <defaultValue:4.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g15 <defaultValue:2.0; minValue:-20.0; maxValue:20.0;>;
+    
+    parameter float g21 <defaultValue:4.0; minValue:-20.0; maxValue:20.0;>; 
+    parameter float g22 <defaultValue:9.0; minValue:-20.0; maxValue:20.0;>; 
+    parameter float g23 <defaultValue:12.0; minValue:-20.0; maxValue:20.0;>; 
+    parameter float g24 <defaultValue:9.0; minValue:-20.0; maxValue:20.0;>; 
+    parameter float g25 <defaultValue:4.0; minValue:-20.0; maxValue:20.0;>;
+    
+    parameter float g31 <defaultValue:5.0; minValue:-20.0; maxValue:20.0;>; 
+    parameter float g32 <defaultValue:12.0; minValue:-20.0; maxValue:20.0;>; 
+    parameter float g33 <defaultValue:15.0; minValue:-20.0; maxValue:20.0;>; 
+    parameter float g34 <defaultValue:12.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g35 <defaultValue:5.0; minValue:-20.0; maxValue:20.0;>;
+    
+    parameter float g41 <defaultValue:4.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g42 <defaultValue:9.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g43 <defaultValue:12.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g44 <defaultValue:9.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g45 <defaultValue:4.0; minValue:-20.0; maxValue:20.0;>;
+    
+    parameter float g51 <defaultValue:2.0; minValue:-20.0; maxValue:20.0;>; 
+    parameter float g52 <defaultValue:4.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g53 <defaultValue:5.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g54 <defaultValue:4.0; minValue:-20.0; maxValue:20.0;>;
+    parameter float g55 <defaultValue:2.0; minValue:-20.0; maxValue:20.0;>;
+    
+    parameter float maskWeight <
+        minValue: 0.0;
+        defaultValue: float(1.0/159.0); 
+        maxValue: 0.01;
+    >;
+    
+    void evaluatePixel() {
+        
+        float2 pos = outCoord();
+        
+        float4 rp = float4(0.0, 0.0, 0.0, 0.0);
+        int mIndex = 0;
+        float2 position;
+        
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g11;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g12;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g13;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g14;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g15;
+        mIndex++;
+        
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g21;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g22;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g23;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g24;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g25;
+        mIndex++;
+        
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g31;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g32;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g33;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g34;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g35;
+        mIndex++;
+        
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g41;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g42;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g43;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g44;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g45;
+        mIndex++;
+        
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g51;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g52;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g53;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g54;
+        mIndex++;
+        position = pos + float2(mod(float(mIndex), 5.0) - 2.0, floor(float(mIndex) / 5.0) - 2.0);
+        rp += sampleNearest(src, position) * maskWeight * g55;
+
+      
+        float alpha = sampleNearest(src, outCoord()).a;
+        dst = float4(rp.r, rp.g, rp.b, alpha);
+    }
+    
+}

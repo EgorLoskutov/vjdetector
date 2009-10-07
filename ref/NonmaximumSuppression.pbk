@@ -1,0 +1,48 @@
+<languageVersion : 1.0;>
+
+kernel NewFilter
+<   namespace : "Kwon.Dongwook";
+    vendor : "http://blog.spiderbutterfly.com";
+    version : 1;
+    description : "Non-maximum suppression";
+>
+{
+
+    input image4 src;
+    output pixel4 dst;
+
+    void evaluatePixel() {
+        float2 cPos = outCoord();
+        pixel4 pixel = sampleNearest(src,cPos);
+        
+        pixel1 red = pixel.r;
+        pixel1 dir = pixel.g;
+        pixel1 sp = 0.0;
+        pixel1 before;
+        pixel1 after;
+        
+        if (dir == 0.0 || dir == 1.0) {
+            before = sampleNearest(src, float2(cPos.x, cPos.y - 1.0)).r;
+            after = sampleNearest(src, float2(cPos.x, cPos.y + 1.0)).r;
+            if (red >= before && red > after)
+                sp = red;
+        } else if (0.4 <= dir && dir >= 0.6) {
+            before = sampleNearest(src, float2(cPos.x - 1.0, cPos.y)).r;
+            after = sampleNearest(src, float2(cPos.x + 1.0, cPos.y)).r;
+            if (red >= before && red > after)
+                sp = red;
+        } else if (0.2 <= dir && dir >= 0.3) {
+            before = sampleNearest(src, float2(cPos.x - 1.0, cPos.y - 1.0)).r;
+            after = sampleNearest(src, float2(cPos.x + 1.0, cPos.y + 1.0)).r;
+            if (red >= before && red > after)
+                sp = red;
+        } else if (0.7 <= dir && dir >= 0.8) {
+            before = sampleNearest(src, float2(cPos.x + 1.0, cPos.y - 1.0)).r;
+            after = sampleNearest(src, float2(cPos.x - 1.0, cPos.y + 1.0)).r;
+            if (red >= before && red > after)
+                sp = red;
+        }
+        
+        dst = pixel4(sp, sp, sp, 1);
+    }
+}
