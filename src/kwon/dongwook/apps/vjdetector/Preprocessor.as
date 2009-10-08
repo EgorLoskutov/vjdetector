@@ -7,17 +7,24 @@ package kwon.dongwook.apps.vjdetector {
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	
-	import kwon.dongwook.apps.cv.filters.Histogram;
+	import kwon.dongwook.apps.cv.effect.Histogram;
 		
+	/**
+	 * It apply black and white filter and equalize histogram into new bitmapData.
+	 * 
+	 * 
+	 * @author Dongwook, Kwon
+	 * 
+	 */
 	public class Preprocessor {
 		
-		[Embed("./filters/BlackAndWhiteFilter.pbj", mimeType="application/octet-stream")]
-		private	 var BlackAndWhiteFilter:Class;
+		[Embed(source="./filters/BlackAndWhiteKernel.pbj", mimeType="application/octet-stream")]
+		public	var BlackAndWhiteKernel:Class;
 		
 		private var _blackAndWhiteFilter:ShaderFilter;
 		
 		public function Preprocessor() {
-			_blackAndWhiteFilter = new ShaderFilter(new Shader(new BlackAndWhiteFilter() as ByteArray));
+			_blackAndWhiteFilter = new ShaderFilter(new Shader(new BlackAndWhiteKernel() as ByteArray));
 		}
 		
 		/**
@@ -34,9 +41,8 @@ package kwon.dongwook.apps.vjdetector {
 		 * 
 		 */
 		public function getProcessedVector(bitmapData:BitmapData):Vector.<uint> {
-			var processed:BitmapData = new BitmapData(bitmapData.width, bitmapData.height, false, 0);
-			processed.applyFilter(bitmapData, bitmapData.rect, new Point(0, 0), _blackAndWhiteFilter);
-			return Histogram.equalize(bitmapData, false);
+			bitmapData.applyFilter(bitmapData, bitmapData.rect, new Point(0, 0), _blackAndWhiteFilter);
+			return Histogram.equalize(bitmapData);
 		}
 		
 	}

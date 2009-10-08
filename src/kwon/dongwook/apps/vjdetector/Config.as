@@ -23,7 +23,8 @@ package kwon.dongwook.apps.vjdetector {
 		 * It requires tests but worth to try.
 		 *  
 		 */
-		public static const DO_CANNY_PRUNING:uint = 1;
+		public var doCannyPruning:Boolean = true;
+		public var showCannyEdge:Boolean = false;
 		
 		/** 
 		 * The location of cascade file which is zipped 
