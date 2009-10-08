@@ -20,7 +20,7 @@ Depending on this trained file, result will be quite different.
 
 *Scale factor & Minimum size*
 
-In order to understand this parameter and Minimum size parameter, you need to know little bit of how it find objects.
+In order to understand these parameters, you need to know little bit of how it find objects.
 The search engine in this program starts by searching certain area of picture whether it has a object that you are interested which the cascade file is trained. And next area until look through the whole area of picture.
 Then increase the size of area and do it again, so the size of search area will be almost as big as its picture.
 Later engine combine the results of the areas.
