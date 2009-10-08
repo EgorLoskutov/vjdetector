@@ -105,7 +105,10 @@ kernel NewFilter
         pos = current + float2(mod(float(mIndex), 3.0) - 1.0, floor(float(mIndex) / 3.0) - 1.0);
         gy += (sampleNearest(src, pos) * MGY[2][2]);
         
-  //      g = sqrt((gx * gx) + (gy * gy));
+//        more natural result
+//        g = sqrt((gx * gx) + (gy * gy));
+
+//      more strong edges and little bit more fast calculations
         g = abs(gx) + abs(gy);
         
         float dir = 0.5;
@@ -137,6 +140,7 @@ kernel NewFilter
         }
         float alpha = sampleNearest(src, outCoord()).a;
 //        dst = float4(g.r, g.r, g.r, alpha);
+        // Use green channel to store direction data in the image
         dst = pixel4(g.r, dir, g.r, alpha);
     }
 }
