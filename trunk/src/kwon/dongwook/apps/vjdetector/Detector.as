@@ -1,6 +1,8 @@
 package kwon.dongwook.apps.vjdetector {
 
 	
+	import __AS3__.vec.Vector;
+	
 	import flash.display.BitmapData;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
@@ -9,10 +11,12 @@ package kwon.dongwook.apps.vjdetector {
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
+	import kwon.dongwook.apps.cv.edgeDetector.Canny;
 	import kwon.dongwook.apps.vjdetector.models.HaarCascade;
 	import kwon.dongwook.apps.vjdetector.models.IntegralImage;
 	import kwon.dongwook.apps.vjdetector.models.ResultFilter;
 	import kwon.dongwook.events.DataEvent;
+	
 	
 	/**
 	 * 
@@ -53,7 +57,18 @@ package kwon.dongwook.apps.vjdetector {
 		public static const ERROR:String = "error";
 		[Event(name="error", type="flash.events.ErrorEvent")]
 		
-
+		private const EDGE_VALUE:uint = 255;
+		/**
+		 * This is the density of edge for pruning search
+		 * If the area of search has smaller edge value than edgeDensity,
+		 * detector will skip this area to speed up.
+		 * 0.08 means if the area has less than 8% edge pixels of the area, this area will be skipped 
+		 * Too high density will miss possible target which will lead failure to detect any.
+		 * Too low density will not help for speed boosting, worst case, it just decreases speed.
+		 * 
+		 */
+		public var edgeDensity:Number = 0.07 * EDGE_VALUE;
+		
 		private var _preprocessor:Preprocessor;
 		
 		private var _loader:DataLoader;
@@ -62,8 +77,9 @@ package kwon.dongwook.apps.vjdetector {
 		private var _cascades:Dictionary;
 		private var _config:Config;
 		public function get config():Config { return _config; }
-		private var _bitmap:BitmapData;
+		private var _bitmapData:BitmapData;
 		private var _resultFilter:ResultFilter;
+		private var _cannyEdgeDetector:Canny;
 		
 		public function getCascade(name:String = null):HaarCascade {
 			if (name == null)
@@ -73,6 +89,7 @@ package kwon.dongwook.apps.vjdetector {
 		
 		public function Detector() {
 			_preprocessor = new Preprocessor();
+			_cannyEdgeDetector = new Canny();
 		}
 		
 		public function load():void {
@@ -108,7 +125,7 @@ package kwon.dongwook.apps.vjdetector {
 		 */
 		public function detect(bitmapData:BitmapData):Vector.<Rectangle> {
 			if (_isReady) {
-				_bitmap = bitmapData;
+				_bitmapData = bitmapData;
 				return getFindObjectsOn(bitmapData);
 			} else {
 				dispatchEvent(new ErrorEvent(ERROR, false, true, "Detector isn't ready to use."));
@@ -116,13 +133,11 @@ package kwon.dongwook.apps.vjdetector {
 			return null;
 		}
 		
-		private function getMaxCheckCount(bitmapData:BitmapData = null):uint {
-			if (!bitmapData)
-				bitmapData = _bitmap;
+		private function getMaxCheckCount(width:uint, height:uint):uint {
 			var ww:uint = getCascade().trainedWindowSize.width;
 			var wh:uint = getCascade().trainedWindowSize.height;
-			var iw:uint = bitmapData.width - 10;
-			var ih:uint = bitmapData.height - 10;
+			var iw:uint = width - 10;
+			var ih:uint = height - 10;
 			var maxCheckCount:uint = 0;
 			var scale:Number = _config.scaleFactor;
 			for(var i:Number = 1; (i * ww) < iw && (i * wh) < ih; i *= scale)
@@ -132,16 +147,28 @@ package kwon.dongwook.apps.vjdetector {
 		
 		private function getFindObjectsOn(bitmapData:BitmapData):Vector.<Rectangle> {
 			var objects:Vector.<Rectangle> = new Vector.<Rectangle>();
-			var integralImage:IntegralImage = new IntegralImage(bitmapData, _preprocessor.getProcessedVector(bitmapData));
-			var cascade:HaarCascade = getCascade();
-			cascade.integralImage = integralImage;
 			var width:uint = bitmapData.width , height:uint = bitmapData.height;
+			
+			var source:BitmapData = bitmapData.clone();
+			var pixels:Vector.<uint> = _preprocessor.getProcessedVector(source);
+
+			var cascade:HaarCascade = getCascade();
+			cascade.integralImage = new IntegralImage(source, pixels);
+			
+			var doCannyPruning:Boolean = _config.doCannyPruning;
+
+			if (doCannyPruning) {
+				var edge:BitmapData = _cannyEdgeDetector.edge(source, false, false);
+				if (_config.showCannyEdge)
+					bitmapData.draw(edge);
+				var cannyEdgeImage:IntegralImage = new IntegralImage(edge);
+			}
 			
 			var scaleFactor:Number = _config.scaleFactor;
 			var minSize:Rectangle = _config.minSize.clone();
 			var trainedWindowSize:Rectangle = cascade.trainedWindowSize;
 			
-			var maxCount:uint = getMaxCheckCount();
+			var maxCount:uint = getMaxCheckCount(width, height);
 			var math:* = Math; // For speed up
 			var currentScale:Number = math.pow(scaleFactor, maxCount-1);
 			
@@ -152,7 +179,10 @@ package kwon.dongwook.apps.vjdetector {
 
 				if (rect.width < minSize.width || rect.height < minSize.height)
 					continue;
-
+				
+				if (doCannyPruning) {
+					var pruneThreshold:Number = rect.width * rect.height * edgeDensity;
+				}
 				var step:Point = new Point(1 , math.max(currentScale, 2));
 				var end:Point = new Point(math.round((width - rect.width)/step.y), math.round((height - rect.height)/step.y));
 				var start:Point = new Point();
@@ -161,6 +191,11 @@ package kwon.dongwook.apps.vjdetector {
 					rect.y = math.round(iy * step.y);
 					for (var ix:int = start.x; ix < end.x; ix += step.x) {
 						rect.x = math.round(ix * step.y);
+						if (doCannyPruning) {
+							if (cannyEdgeImage.getSumOf(rect) < pruneThreshold) {
+								continue;
+							}
+						}
 						if (cascade.checkOf(rect)) {
 							objects.push(rect.clone());
 							if (_config.findBiggest && objects.length >= _config.minNeighbors)

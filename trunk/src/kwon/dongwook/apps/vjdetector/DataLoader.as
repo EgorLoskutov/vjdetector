@@ -68,6 +68,10 @@ package kwon.dongwook.apps.vjdetector {
 				_config.minNeighbors = uint(StringUtil.trim(vars.minNeighbors));
 			if (vars.findBiggest)
 				_config.findBiggest = Boolean(vars.findBiggest == "true");
+			if (vars.doCannyPruning)
+				_config.doCannyPruning = Boolean(vars.doCannyPruning == "true");
+			if (vars.showCannyEdge)
+				_config.showCannyEdge = Boolean(vars.showCannyEdge == "true");
 
 			try {
 				var files:Array = vars.cascadeFiles.split(",");
