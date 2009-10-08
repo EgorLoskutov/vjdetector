@@ -8,7 +8,7 @@ kernel NewFilter
 >
 {
 
-    // As long as there isn't no support of graph in PixelBender under flash
+    // Since there isn't no support of graph in PixelBender under flash
     // the input image should be black and white, use another filter before use this
     input image4 src;
     output pixel4 dst;
