@@ -20,12 +20,12 @@ Depending on this trained file, result will be quite different.
 
 *Scale factor & Minimum size*
 
-In order to understand these parameters, you need to know little bit of how it find objects.
-The search engine in this program starts by searching certain area of picture whether it has a object that you are interested which the cascade file is trained. And next area until look through the whole area of picture.
-Then increase the size of area and do it again, so the size of search area will be almost as big as its picture.
-Later engine combine the results of the areas.
+In order to understand these parameters, you need to know little bit of how it finds objects.
+The detector in this program starts by searching the certain area of a picture whether it has a object that you are interested which the cascade file is trained. And goes on to the next area until looks through the whole area of a picture.
+Then increase the size of the area little bit and do it all again, so the size of the search area will be almostly as big as its picture.
+Later the engine combines the results of found the areas.
 
-The first start size of the area to look for is the minimum size parameter.
+The start size of the area to look for is the minimum size parameter.
 So, if it's big, performance will be better than small size of it, but you can miss small faces than its area.
 
 The scale factor is how much you want to increase this search area for the next iteration of search. 
@@ -43,13 +43,13 @@ Literally, it stops when finds the biggest object. Because the detector starts w
 
 *Do canny pruning*
 
-It uses Canny edge detector which finds the all edges in the picture.
+It uses Canny edge detector which finds the all edges in a picture.
 And if the search area doesn't have enough edges, skip that area to boost performance.
-Usually a face has lots of edge on eyes, lips, nose, shadow of hair etc... 
-For instance, if you want to find multiple small size of faces in one big picture, it won't help that much, but the big size of face in a picture will help to increase performance.
+It's based on the fact that usually a face has lots of edges around eyes, lips, nose, shadow of hair etc.
+Therefore, if you want to find multiple small size of faces in one big picture, it won't help that much, but with the big size of a face in a picture in this option will help to increase performance.
 
-As usual of Haar like face detector, it's affected a lot by light and angle of head. 
-So you need to adjust these parameters for best result.
+As usual of Haar like face detector, the result is affected a lot by lightening and an angle of head. 
+So you need to adjust these parameters for the best result.
 
 
 
