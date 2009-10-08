@@ -1,0 +1,54 @@
+#summary One-sentence summary of this page.
+
+===Parameters for detect objects===
+
+  * Cascade file
+  * Scale factor
+  * Minimum size
+  * Minimum Neighbour count
+  * Find biggest
+  * Do canny pruning
+
+These are parameters affect result and speed to detect object in this detector which mostly the same in OpenCV 1.1 face detector.
+
+*Cascade file
+It contains trained file which object you want to find like frontal face, eyes, upper body etc.
+So you need to choose right trainned data.
+I only use OpenCV 1.1's cascade files but you can find other trained files on the internet.
+Depending on this trained file, result will be quite different.
+
+* Scale factor & Minimum size
+In order to understand this parameter and Minimum size parameter, you need to know little bit of how it find objects.
+The search engine in this program starts by searching certain area of picture whether it has a object that you are interested which the cascade file is trained. And next area until look through the whole area of picture.
+Then increase the size of area and do it again, so the size of search area will be almost as big as its picture.
+Later engine combine the results of the areas.
+
+The first start size of the area to look for is the minimum size parameter.
+So, if it's big, performance will be better than small size of it, but you can miss small faces than its area.
+
+The scale factor is how much you want to increase this search area for the next iteration of search. 
+Big scale number will increase a lots of speed as you can guess, but too big number will skip lots of areas which lead bad results.
+
+*Minimum Neighbour count
+From above explanation, You can notice the object detector searches target objects multiple times on a image with a different size of areas which means around target objects there will be lots of the same results.
+So with minimum neighbour count parameter, detector decides whether this results should be included in final result or not.
+If you set this to 0, detector will return all results it has.
+
+* Find biggest
+Literally, it stops when finds the biggest object. Because the detector starts with the most biggest area first, the biggest object will be the first object it finds. It affects quite of speed, but it can't be wrong object. It's greatly helped to find on real time like finding a face using web cam.
+
+* Do canny pruning
+It uses Canny edge detector which finds the all edges in the picture.
+And if the search area doesn't have enough edges, skip that area to boost performance.
+Usually a face has lots of edge on eyes, lips, nose, shadow of hair etc... 
+For instance, if you want to find multiple small size of faces in one big picture, it won't help that much, but the big size of face in a picture will help to increase performance.
+
+As usual of Haar like face detector, it's affected a lot by light and angle of head. 
+So you need to adjust these parameters for best result.
+
+
+
+
+
+
+  
