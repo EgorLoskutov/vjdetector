@@ -48,7 +48,7 @@ And if the search area doesn't have enough edges, skip that area to boost perfor
 It's based on the fact that usually a face has lots of edges around eyes, lips, nose, shadow of hair etc.
 Therefore, if you want to find multiple small size of faces in one big picture, it won't help that much, but with the big size of a face in a picture in this option will help to increase performance.
 
-As usual of Haar like face detector, the result is affected a lot by lightening and an angle of head. 
+As usual of Haar like face detector, the result is affected a lot by lighting and an angle of head. 
 So you need to adjust these parameters for the best result.
 
 
